@@ -9,10 +9,12 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.kstream.Produced;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -24,6 +26,8 @@ import java.util.UUID;
 public class KafkaStreamsApplication {
     private Producer<String, String> producer;
     private final static String INP_TOPIC = "input-topic";
+    //@Autowired
+    //private KafkaAdmin kafkaAdmin;
 
     public static void main(String[] args) {
         SpringApplication.run(KafkaStreamsApplication.class, args);
@@ -41,6 +45,7 @@ public class KafkaStreamsApplication {
             properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
             producer = new KafkaProducer<String, String>(properties);
+            topicGenerator();
 
             StreamsBuilder streamsBuilder = new StreamsBuilder();
             KStream<String, String> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
@@ -58,7 +63,6 @@ public class KafkaStreamsApplication {
 
     @Scheduled(fixedDelay = 2000, initialDelay = 5000)
     public void topicGenerator() {
-        System.out.println(">>> Tick");
         String key = UUID.randomUUID().toString();
         String value = "Hello, Kafka! important";
 

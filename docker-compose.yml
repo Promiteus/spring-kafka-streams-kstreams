@@ -15,6 +15,7 @@ services:
     image: confluentinc/cp-server:latest
     platform: linux/amd64
     hostname: broker
+    restart: on-failure
     container_name: broker
     depends_on:
       - zookeeper
