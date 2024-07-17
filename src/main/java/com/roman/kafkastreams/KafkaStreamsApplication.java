@@ -42,22 +42,6 @@ public class KafkaStreamsApplication {
             properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
             producer = new KafkaProducer<String, String>(properties);
-           /* String key = "k-001";
-            String value = "Hello, Kafka!";
-
-            ProducerRecord<String, String> record = new ProducerRecord<>(INP_TOPIC, key, value);
-
-            producer.send(record, new Callback() {
-                @Override
-                public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-                    if (e == null) {
-                        System.out.println("Message sent successfully. Offset: " + recordMetadata.offset());
-                    } else {
-                        System.err.println("Error sending message: " + e.getMessage());
-                    }
-                }
-            });*/
-
 
             StreamsBuilder streamsBuilder = new StreamsBuilder();
             KStream<String, String> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
