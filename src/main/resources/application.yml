@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: kafka-streams-1
+  kafka:
+    streams:
+      bootstrap-servers: localhost:9092
+      application-id: order-streams-app
+
+
