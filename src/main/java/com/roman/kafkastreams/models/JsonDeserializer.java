@@ -13,10 +13,10 @@ import java.util.Map;
 
 public class JsonDeserializer<T> implements Deserializer<T> {
     private final ObjectMapper mapper;
-    private final TypeReference<T> typeReference;
+    private final Class<T> typeReference;
 
 
-    public JsonDeserializer(ObjectMapper mapper, TypeReference<T> typeReference) {
+    public JsonDeserializer(ObjectMapper mapper, Class<T> typeReference) {
         this.mapper = mapper;
         this.typeReference = typeReference;
     }
@@ -38,9 +38,6 @@ public class JsonDeserializer<T> implements Deserializer<T> {
         }
     }
 
-    private Class<T> deserializeFrom() {
-        return null;
-    }
 
     @Override
     public T deserialize(String topic, Headers headers, byte[] data) {
