@@ -22,7 +22,7 @@ import java.util.UUID;
 @Profile(value = {"default", "string-value"})
 @Component
 public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslation {
-    private final static String INP_TOPIC = "input-topic";
+    private final static String INP_TOPIC = "string-topic";
     private KafkaStreams kafkaStreams;
     private final Properties kafkaStreamsProps;
     private final Producer<String, String> producer;
@@ -67,7 +67,6 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslat
 
     @PreDestroy
     public void destroy() {
-        System.out.println(" > close App");
         this.kafkaStreams.close();
     }
 }
