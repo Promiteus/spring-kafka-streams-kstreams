@@ -1,4 +1,5 @@
 package com.roman.kafkastreams.configs;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.streams.StreamsConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,5 +25,10 @@ public class StreamsConfigs {
         properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         return properties;
+    }
+
+    @Bean
+    public KafkaProducer<String,String> kvKafkaProducer(Properties kafkaProducerProps) {
+        return new KafkaProducer<String, String>(kafkaProducerProps);
     }
 }

@@ -10,6 +10,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.kstream.Produced;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,9 +24,11 @@ import java.util.UUID;
 @EnableScheduling
 @SpringBootApplication
 public class KafkaStreamsApplication {
-    private Producer<String, String> producer;
+
     private final static String INP_TOPIC = "input-topic";
     private KafkaStreams kafkaStreams;
+    @Autowired
+    private Producer<String, String> producer;
 
 
     public static void main(String[] args) {
@@ -43,7 +46,6 @@ public class KafkaStreamsApplication {
             properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
             properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-            producer = new KafkaProducer<String, String>(properties);
             topicGenerator();
 
             StreamsBuilder streamsBuilder = new StreamsBuilder();
