@@ -1,5 +1,6 @@
 package com.roman.kafkastreams;
 
+import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.Serdes;
@@ -26,10 +27,10 @@ import java.util.UUID;
 public class KafkaStreamsApplication {
 
     private final static String INP_TOPIC = "input-topic";
-    private KafkaStreams kafkaStreams;
     @Autowired
     private Producer<String, String> producer;
-
+    @Autowired
+    private IKafkaStreamsValueTranslation kafkaStreamsValueTranslation;
 
     public static void main(String[] args) {
         SpringApplication.run(KafkaStreamsApplication.class, args);
@@ -38,27 +39,8 @@ public class KafkaStreamsApplication {
     @Bean
     public CommandLineRunner runner() {
         return args -> {
-            System.out.println("runner");
-
-            Properties properties = new Properties();
-            properties.put(StreamsConfig.APPLICATION_ID_CONFIG, "my-streams-app");
-            properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-            properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-            properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
             topicGenerator();
-
-            StreamsBuilder streamsBuilder = new StreamsBuilder();
-            KStream<String, String> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
-
-            sourceStream.print(Printed.<String, String>toSysOut().withLabel("input-data"));
-            KStream<String, String> transformStream = sourceStream.filter((k, v) -> v.contains("important")).mapValues(v -> v.toUpperCase());
-
-            transformStream.to("output-topic", Produced.with(Serdes.String(), Serdes.String()));
-            transformStream.print(Printed.<String, String>toSysOut().withLabel("output-data"));
-
-            kafkaStreams = new KafkaStreams(streamsBuilder.build(), properties);
-            kafkaStreams.start();
+            this.kafkaStreamsValueTranslation.exec();
         };
     }
 
@@ -80,9 +62,4 @@ public class KafkaStreamsApplication {
 
     }
 
-    @PreDestroy
-    public void destroy() {
-        System.out.println(" > close App");
-        this.kafkaStreams.close();
-    }
 }
