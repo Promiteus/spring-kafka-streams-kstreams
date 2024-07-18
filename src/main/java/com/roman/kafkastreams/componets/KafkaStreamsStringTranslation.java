@@ -13,11 +13,13 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.kstream.Produced;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Properties;
 import java.util.UUID;
 
+@Profile(value = {"default", "string-value"})
 @Component
 public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslation {
     private final static String INP_TOPIC = "input-topic";
