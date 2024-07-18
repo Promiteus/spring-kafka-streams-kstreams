@@ -2,6 +2,10 @@ package com.roman.kafkastreams.componets;
 
 import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
 import jakarta.annotation.PreDestroy;
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -12,15 +16,18 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.springframework.stereotype.Component;
 
 import java.util.Properties;
+import java.util.UUID;
 
 @Component
 public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslation {
     private final static String INP_TOPIC = "input-topic";
     private KafkaStreams kafkaStreams;
     private final Properties kafkaStreamsProps;
+    private final Producer<String, String> producer;
 
-    public KafkaStreamsStringTranslation(Properties kafkaStreamsProps) {
+    public KafkaStreamsStringTranslation(Properties kafkaStreamsProps, Producer<String, String> producer) {
         this.kafkaStreamsProps = kafkaStreamsProps;
+        this.producer = producer;
     }
 
     @Override
@@ -36,6 +43,23 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslat
 
         this.kafkaStreams = new KafkaStreams(streamsBuilder.build(), this.kafkaStreamsProps);
         this.kafkaStreams.start();
+    }
+
+    @Override
+    public void toTopic() {
+        String key = UUID.randomUUID().toString();
+        String value = "Hello, Kafka! important";
+
+        this.producer.send(new ProducerRecord<>(INP_TOPIC, key, value), new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+                if (e == null) {
+                    System.out.println("Message sent successfully. Offset: " + recordMetadata.offset());
+                } else {
+                    System.err.println("Error sending message: " + e.getMessage());
+                }
+            }
+        });
     }
 
 

@@ -3,6 +3,7 @@ package com.roman.kafkastreams;
 import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.common.protocol.types.Field;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -25,10 +26,6 @@ import java.util.UUID;
 @EnableScheduling
 @SpringBootApplication
 public class KafkaStreamsApplication {
-
-    private final static String INP_TOPIC = "input-topic";
-    @Autowired
-    private Producer<String, String> producer;
     @Autowired
     private IKafkaStreamsValueTranslation kafkaStreamsValueTranslation;
 
@@ -46,20 +43,7 @@ public class KafkaStreamsApplication {
 
     @Scheduled(fixedDelay = 2000, initialDelay = 5000)
     public void topicGenerator() {
-        String key = UUID.randomUUID().toString();
-        String value = "Hello, Kafka! important";
-
-        producer.send(new ProducerRecord<>(INP_TOPIC, key, value), new Callback() {
-            @Override
-            public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-                if (e == null) {
-                    System.out.println("Message sent successfully. Offset: " + recordMetadata.offset());
-                } else {
-                    System.err.println("Error sending message: " + e.getMessage());
-                }
-            }
-        });
-
+        this.kafkaStreamsValueTranslation.toTopic();
     }
 
 }
