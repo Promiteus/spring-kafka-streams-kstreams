@@ -52,16 +52,7 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslat
         String key = UUID.randomUUID().toString();
         String value = "Hello, Kafka! important";
 
-        this.producer.send(new ProducerRecord<>(INP_TOPIC, key, value), new Callback() {
-            @Override
-            public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-                if (e == null) {
-                    System.out.println("Message sent successfully. Offset: " + recordMetadata.offset());
-                } else {
-                    System.err.println("Error sending message: " + e.getMessage());
-                }
-            }
-        });
+        this.send(this.producer, INP_TOPIC, key, value);
     }
 
 
