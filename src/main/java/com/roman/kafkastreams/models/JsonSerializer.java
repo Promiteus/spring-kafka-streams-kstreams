@@ -11,9 +11,7 @@ public class JsonSerializer<T> implements Serializer<T> {
     private Gson gson = new Gson();
 
     @Override
-    public void configure(Map<String, ?> configs, boolean isKey) {
-
-    }
+    public void configure(Map<String, ?> configs, boolean isKey) {}
 
     @Override
     public byte[] serialize(String s, T t) {
@@ -25,9 +23,6 @@ public class JsonSerializer<T> implements Serializer<T> {
         return gson.toJson(data).getBytes(StandardCharsets.UTF_8);
     }
 
-
     @Override
-    public void close() {
-
-    }
+    public void close() {}
 }

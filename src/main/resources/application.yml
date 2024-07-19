@@ -1,6 +1,8 @@
 spring:
   application:
     name: kafka-streams-1
+  profiles:
+    active: json-value
   kafka:
     streams:
       bootstrap-servers: localhost:9092

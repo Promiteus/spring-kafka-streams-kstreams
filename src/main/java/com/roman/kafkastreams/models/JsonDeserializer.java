@@ -1,6 +1,5 @@
 package com.roman.kafkastreams.models;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.header.Headers;
@@ -22,9 +21,7 @@ public class JsonDeserializer<T> implements Deserializer<T> {
     }
 
     @Override
-    public void configure(Map<String, ?> configs, boolean isKey) {
-
-    }
+    public void configure(Map<String, ?> configs, boolean isKey) {}
 
     @Override
     public T deserialize(String s, byte[] bytes) {
@@ -57,7 +54,5 @@ public class JsonDeserializer<T> implements Deserializer<T> {
     }
 
     @Override
-    public void close() {
-
-    }
+    public void close() {}
 }
