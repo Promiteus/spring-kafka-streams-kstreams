@@ -19,8 +19,10 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.Random;
 import java.util.UUID;
 
 @Profile("json-value")
@@ -62,10 +64,22 @@ public class KafkaStreamsPurchaseTranslation implements IKafkaStreamsValueTransl
         this.kafkaStreams.start();
     }
 
+    /**
+     * Случайна цена из диапазона
+     * @param min
+     * @param max
+     * @return
+     */
+    private String getRandomPrice(double min, double max) {
+        double random = new Random().nextDouble();
+        double val = min + (random * (max - min));
+        return new DecimalFormat("#,##").format(val);
+    }
+
     @Override
     public void toTopic() {
         String key = null;
-        Purchase purchase = Purchase.builder().id(UUID.randomUUID().toString()).name("pencil").price(100).timestamp(new Date().getTime()).build();
+        Purchase purchase = Purchase.builder().id(UUID.randomUUID().toString()).name("pencil").price(Double.parseDouble(this.getRandomPrice(10, 100))).timestamp(new Date().getTime()).build();
         Gson gson = new Gson();
         String value = gson.toJson(purchase);
 
