@@ -66,9 +66,9 @@ public class KafkaStreamsPurchaseTranslation implements IKafkaStreamsValueTransl
 
     /**
      * Случайна цена из диапазона
-     * @param min
-     * @param max
-     * @return
+     * @param min double
+     * @param max double
+     * @return String
      */
     private String getRandomPrice(double min, double max) {
         double random = new Random().nextDouble();

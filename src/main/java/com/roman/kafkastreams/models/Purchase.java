@@ -15,5 +15,6 @@ public class Purchase implements Serializable {
     private String id;
     private String name;
     private double price;
+    private String currency = "RUR";
     private long timestamp;
 }
