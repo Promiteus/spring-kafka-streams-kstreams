@@ -16,7 +16,6 @@ import org.apache.kafka.streams.kstream.*;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
@@ -46,7 +45,7 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamsValue
     private String getRandomPrice(double min, double max) {
         double random = new Random().nextDouble();
         double val = min + (random * (max - min));
-        return new DecimalFormat("#,##").format(val);
+        return String.valueOf(val);
     }
 
     @Override
