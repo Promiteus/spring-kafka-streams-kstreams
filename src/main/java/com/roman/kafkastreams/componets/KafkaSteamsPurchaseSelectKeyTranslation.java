@@ -8,7 +8,6 @@ import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.common.protocol.types.Field;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -43,6 +42,7 @@ public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamsVal
         StreamsBuilder streamsBuilder = new StreamsBuilder();
         KStream<String, Purchase> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), purchaseSerde));
 
+        KeyValueMapper<String, Purchase, String> purchaseIdMapper = (k, v) -> v.getId();
         sourceStream.print(Printed.<String, Purchase>toSysOut().withLabel("input-data"));
         KStream<String, Purchase> transformStream = sourceStream.mapValues(v ->
                 Purchase.builder()
@@ -51,13 +51,8 @@ public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamsVal
                         .price(v.getPrice())
                         .timestamp(v.getTimestamp())
                         .build()
-        );
+        ).selectKey(purchaseIdMapper);;
 
-        KeyValueMapper<String, Purchase, String> keyValueMapper = (k, v) -> {
-            return v.getId();
-        };
-        transformStream.print(Printed.<String, Purchase>toSysOut().withLabel("output-data-without-key"));
-        transformStream.selectKey((k, p) -> (keyValueMapper));
         transformStream.to("output-topic", Produced.with(Serdes.String(), purchaseSerde));
         transformStream.print(Printed.<String, Purchase>toSysOut().withLabel("output-data-with-key"));
 
