@@ -1,10 +1,19 @@
 package com.roman.kafkastreams.componets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import com.roman.kafkastreams.models.JsonDeserializer;
+import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.common.protocol.types.Field;
+import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.KStream;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +38,16 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
 
     @Override
     public void exec() {
+        JsonDeserializer<Purchase> purchaseJsonDeserializer = new JsonDeserializer<>(new ObjectMapper(), Purchase.class);
+        JsonSerializer<Purchase> purchaseJsonSerializer = new JsonSerializer<>();
+        Serde<Purchase> purchaseSerde = Serdes.serdeFrom(purchaseJsonSerializer, purchaseJsonDeserializer);
+
+        StreamsBuilder streamsBuilder1 = new StreamsBuilder();
+        KStream<String, Purchase> sourceStreams1 = streamsBuilder1.stream(INP_TOPIC_JOIN_1, Consumed.with(Serdes.String(), purchaseSerde));
+
+        StreamsBuilder streamsBuilder2 = new  StreamsBuilder();
+        KStream<String, Purchase> sourceStream2 = streamsBuilder2.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
+
 
     }
 
