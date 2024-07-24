@@ -5,12 +5,16 @@ import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
 import com.roman.kafkastreams.models.Purchase;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.streams.KafkaStreams;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 
+@Profile("json-join-values")
+@Component
 public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTranslation {
     private final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
     private final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
@@ -52,7 +56,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
             Thread.sleep(2000);
             Purchase purchase2 = Purchase.builder().id(UUID.randomUUID().toString()).name("Smartphone").price(Double.parseDouble(this.getRandomPrice(8000, 200000))).timestamp(new Date().getTime()).build();
             String value2 = gson.toJson(purchase2);
-            this.send(this.producer, INP_TOPIC_JOIN_1, key, value2);
+            this.send(this.producer, INP_TOPIC_JOIN_2, key, value2);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
