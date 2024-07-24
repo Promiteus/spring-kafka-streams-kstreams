@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -28,6 +29,7 @@ public class KafkaStreamsApplication {
         };
     }
 
+    @Profile(value = {"default", "string-value", "json-value", "json-branch-value", "json-select-key-value"})
     @Scheduled(fixedDelay = 2000, initialDelay = 5000)
     public void topicGenerator() {
         this.kafkaStreamsValueTranslation.toTopic();
