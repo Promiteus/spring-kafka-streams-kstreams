@@ -7,7 +7,6 @@ import com.roman.kafkastreams.models.JsonDeserializer;
 import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.common.protocol.types.Field;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -46,7 +45,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
         KStream<String, Purchase> sourceStreams1 = streamsBuilder1.stream(INP_TOPIC_JOIN_1, Consumed.with(Serdes.String(), purchaseSerde));
 
         StreamsBuilder streamsBuilder2 = new  StreamsBuilder();
-        KStream<String, Purchase> sourceStream2 = streamsBuilder2.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
+        KStream<String, Purchase> sourceStreams2 = streamsBuilder2.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
 
 
     }
