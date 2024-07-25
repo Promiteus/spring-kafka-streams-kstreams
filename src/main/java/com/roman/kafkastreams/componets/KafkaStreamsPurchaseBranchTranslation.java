@@ -86,5 +86,6 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamsValue
     @PreDestroy
     public void destroy() {
         this.kafkaStreams.close();
+        this.producer.close();
     }
 }

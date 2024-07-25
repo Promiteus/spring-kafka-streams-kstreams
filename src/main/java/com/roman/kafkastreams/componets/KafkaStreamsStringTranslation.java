@@ -59,5 +59,6 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslat
     @PreDestroy
     public void destroy() {
         this.kafkaStreams.close();
+        this.producer.close();
     }
 }

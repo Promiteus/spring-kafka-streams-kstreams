@@ -73,5 +73,6 @@ public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamsVal
     @PreDestroy
     public void destroy() {
         this.kafkaStreams.close();
+        this.producer.close();
     }
 }

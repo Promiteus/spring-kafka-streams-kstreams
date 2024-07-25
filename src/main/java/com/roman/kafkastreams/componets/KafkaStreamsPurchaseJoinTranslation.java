@@ -100,5 +100,6 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
     public void destroy() {
         this.kafkaStreams2.close();
         this.kafkaStreams1.close();
+        this.producer.close();
     }
 }

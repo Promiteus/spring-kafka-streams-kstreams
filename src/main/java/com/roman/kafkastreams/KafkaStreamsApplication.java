@@ -1,6 +1,8 @@
 package com.roman.kafkastreams;
 
 import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import jakarta.annotation.PreDestroy;
+import org.apache.kafka.clients.producer.Producer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
