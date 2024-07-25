@@ -3,19 +3,25 @@ package com.roman.kafkastreams.componets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import com.roman.kafkastreams.mappers.PurchaseJoiner;
+import com.roman.kafkastreams.models.CorrelatePurchase;
 import com.roman.kafkastreams.models.JsonDeserializer;
 import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
+import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.JoinWindows;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Printed;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
@@ -26,7 +32,8 @@ import java.util.UUID;
 public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTranslation {
     private final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
     private final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
-    private KafkaStreams kafkaStreams;
+    private KafkaStreams kafkaStreams1;
+    private KafkaStreams kafkaStreams2;
     private final Properties kafkaStreamsProps;
     private final Producer<String, String> producer;
 
@@ -47,7 +54,16 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
         StreamsBuilder streamsBuilder2 = new  StreamsBuilder();
         KStream<String, Purchase> sourceStreams2 = streamsBuilder2.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
 
+        PurchaseJoiner purchaseJoiner = new PurchaseJoiner();
 
+        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofSeconds(1)));
+
+        joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
+
+        this.kafkaStreams1 = new KafkaStreams(streamsBuilder1.build(), this.kafkaStreamsProps);
+        this.kafkaStreams1.start();
+        this.kafkaStreams2 = new KafkaStreams(streamsBuilder2.build(), this.kafkaStreamsProps);
+        this.kafkaStreams2.start();
     }
 
     /**
@@ -78,5 +94,11 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    @PreDestroy
+    public void destroy() {
+        this.kafkaStreams2.close();
+        this.kafkaStreams1.close();
     }
 }
