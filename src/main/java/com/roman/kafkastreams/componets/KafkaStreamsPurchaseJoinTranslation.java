@@ -59,9 +59,10 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
 
         PurchaseJoiner purchaseJoiner = new PurchaseJoiner();
 
+        //JoinWindows.of() задет предельное врменное окно между сообщениями.
         //Сообщения отправляются раз в несколько секунд по две штуки и между ними интервал 1 сек. Если JoinWindows.of() более > 1 сек, то join выдаст результат слияния в joined-data, если ниже, то не выдаст.
         //Слияние происходит только у сообщений с одинаковым ключом и разницой во временных метках не менее 1 сек - Thread.sleep(1000); в методе toTopic()
-        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(10000)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
+        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(100)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
 
         joinedKStream.to("output-topic-join", Produced.with(Serdes.String(), correlatePurchaseSerde));
         joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
@@ -85,7 +86,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
     @Override
     public void toTopic() {
         Gson gson = new Gson();
-        String key = "FIXED"; // КЛЮЧ У СООБЩЕНИЙ ПОДЛЕЖЩИХ JOIN ДОЛЖЕН БЫТЬ ОДИНАКОВЫЙ
+        String key = "purchase"; // КЛЮЧ У СООБЩЕНИЙ ПОДЛЕЖЩИХ JOIN ДОЛЖЕН БЫТЬ ОДИНАКОВЫЙ
 
         try {
             String key1 = UUID.randomUUID().toString();
