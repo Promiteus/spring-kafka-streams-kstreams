@@ -29,8 +29,7 @@ import java.util.UUID;
 public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTranslation {
     private final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
     private final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
-    private KafkaStreams kafkaStreams1;
-    private KafkaStreams kafkaStreams2;
+    private KafkaStreams kafkaStreams;
     private final Properties kafkaStreamsProps;
     private final Producer<String, String> producer;
 
@@ -45,22 +44,23 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
         JsonSerializer<Purchase> purchaseJsonSerializer = new JsonSerializer<>();
         Serde<Purchase> purchaseSerde = Serdes.serdeFrom(purchaseJsonSerializer, purchaseJsonDeserializer);
 
-        StreamsBuilder streamsBuilder1 = new StreamsBuilder();
-        KStream<String, Purchase> sourceStreams1 = streamsBuilder1.stream(INP_TOPIC_JOIN_1, Consumed.with(Serdes.String(), purchaseSerde));
+        JsonDeserializer<CorrelatePurchase> correlatePurchaseJsonDeserializer = new JsonDeserializer<>(new ObjectMapper(), CorrelatePurchase.class);
+        JsonSerializer<CorrelatePurchase> correlatePurchaseJsonSerializer = new JsonSerializer<>();
+        Serde<CorrelatePurchase> correlatePurchaseSerde = Serdes.serdeFrom(correlatePurchaseJsonSerializer, correlatePurchaseJsonDeserializer);
 
-        StreamsBuilder streamsBuilder2 = new  StreamsBuilder();
-        KStream<String, Purchase> sourceStreams2 = streamsBuilder2.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
+        StreamsBuilder streamsBuilder = new StreamsBuilder();
+        KStream<String, Purchase> sourceStreams1 = streamsBuilder.stream(INP_TOPIC_JOIN_1, Consumed.with(Serdes.String(), purchaseSerde));
+        KStream<String, Purchase> sourceStreams2 = streamsBuilder.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
 
         PurchaseJoiner purchaseJoiner = new PurchaseJoiner();
 
-        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(1000))/*, Joined.with(Serdes.String(), purchaseSerde, purchaseSerde)*/);
+        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMinutes(1)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
 
+        joinedKStream.to("output-topic-join", Produced.with(Serdes.String(), correlatePurchaseSerde));
         joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
 
-        this.kafkaStreams1 = new KafkaStreams(streamsBuilder1.build(), this.kafkaStreamsProps);
-        this.kafkaStreams1.start();
-        this.kafkaStreams2 = new KafkaStreams(streamsBuilder2.build(), this.kafkaStreamsProps);
-        this.kafkaStreams2.start();
+        this.kafkaStreams = new KafkaStreams(streamsBuilder.build(), this.kafkaStreamsProps);
+        this.kafkaStreams.start();
     }
 
     /**
@@ -84,7 +84,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
             Purchase purchase1 = Purchase.builder().id(UUID.randomUUID().toString()).name("cola").price(Double.parseDouble(this.getRandomPrice(45, 200))).timestamp(new Date().getTime()).build();
             String value1 = gson.toJson(purchase1);
             this.send(this.producer, INP_TOPIC_JOIN_1, key, value1);
-            Thread.sleep(2000);
+            Thread.sleep(1000);
             Purchase purchase2 = Purchase.builder().id(UUID.randomUUID().toString()).name("Smartphone").price(Double.parseDouble(this.getRandomPrice(8000, 200000))).timestamp(new Date().getTime()).build();
             String value2 = gson.toJson(purchase2);
             this.send(this.producer, INP_TOPIC_JOIN_2, key, value2);
@@ -95,8 +95,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
 
     @PreDestroy
     public void destroy() {
-        this.kafkaStreams2.close();
-        this.kafkaStreams1.close();
+        this.kafkaStreams.close();
         this.producer.close();
     }
 }

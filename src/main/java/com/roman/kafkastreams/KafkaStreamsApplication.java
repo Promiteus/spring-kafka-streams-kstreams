@@ -39,7 +39,7 @@ public class KafkaStreamsApplication {
 
 
     @Profile(value = {"json-join-values"})
-    @Scheduled(fixedDelay = 500, initialDelay = 1000)
+    @Scheduled(fixedDelay = 500)
     public void topicGenerator2() {
         this.kafkaStreamsValueTranslation.toTopic();
     }
