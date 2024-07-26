@@ -52,9 +52,12 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
         KStream<String, Purchase> sourceStreams1 = streamsBuilder.stream(INP_TOPIC_JOIN_1, Consumed.with(Serdes.String(), purchaseSerde));
         KStream<String, Purchase> sourceStreams2 = streamsBuilder.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
 
+        sourceStreams1.print(Printed.<String, Purchase>toSysOut().withLabel("input-source-1"));
+        sourceStreams2.print(Printed.<String, Purchase>toSysOut().withLabel("input-source-2"));
+
         PurchaseJoiner purchaseJoiner = new PurchaseJoiner();
 
-        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMinutes(1)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
+        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(10)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
 
         joinedKStream.to("output-topic-join", Produced.with(Serdes.String(), correlatePurchaseSerde));
         joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
@@ -77,17 +80,18 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
 
     @Override
     public void toTopic() {
-        String key = null;
         Gson gson = new Gson();
 
         try {
-            Purchase purchase1 = Purchase.builder().id(UUID.randomUUID().toString()).name("cola").price(Double.parseDouble(this.getRandomPrice(45, 200))).timestamp(new Date().getTime()).build();
+            String key1 = UUID.randomUUID().toString();
+            Purchase purchase1 = Purchase.builder().id(key1).name("cola").price(Double.parseDouble(this.getRandomPrice(45, 200))).timestamp(new Date().getTime()).build();
             String value1 = gson.toJson(purchase1);
-            this.send(this.producer, INP_TOPIC_JOIN_1, key, value1);
-            Thread.sleep(1000);
-            Purchase purchase2 = Purchase.builder().id(UUID.randomUUID().toString()).name("Smartphone").price(Double.parseDouble(this.getRandomPrice(8000, 200000))).timestamp(new Date().getTime()).build();
+            this.send(this.producer, INP_TOPIC_JOIN_1, key1, value1);
+            Thread.sleep(500);
+            String key2 = UUID.randomUUID().toString();
+            Purchase purchase2 = Purchase.builder().id(key2).name("Smartphone").price(Double.parseDouble(this.getRandomPrice(8000, 200000))).timestamp(new Date().getTime()).build();
             String value2 = gson.toJson(purchase2);
-            this.send(this.producer, INP_TOPIC_JOIN_2, key, value2);
+            this.send(this.producer, INP_TOPIC_JOIN_2, key2, value2);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
