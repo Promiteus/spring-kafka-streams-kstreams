@@ -57,7 +57,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
 
         PurchaseJoiner purchaseJoiner = new PurchaseJoiner();
 
-        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(10)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
+        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.outerJoin(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(1000)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
 
         joinedKStream.to("output-topic-join", Produced.with(Serdes.String(), correlatePurchaseSerde));
         joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
