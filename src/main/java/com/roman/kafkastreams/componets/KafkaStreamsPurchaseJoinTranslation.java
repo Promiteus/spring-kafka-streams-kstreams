@@ -9,6 +9,7 @@ import com.roman.kafkastreams.models.JsonDeserializer;
 import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
 import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -24,6 +25,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 
+@Slf4j
 @Profile("json-join-values")
 @Component
 public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTranslation {
@@ -52,12 +54,14 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
         KStream<String, Purchase> sourceStreams1 = streamsBuilder.stream(INP_TOPIC_JOIN_1, Consumed.with(Serdes.String(), purchaseSerde));
         KStream<String, Purchase> sourceStreams2 = streamsBuilder.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
 
-        sourceStreams1.print(Printed.<String, Purchase>toSysOut().withLabel("input-source-1"));
-        sourceStreams2.print(Printed.<String, Purchase>toSysOut().withLabel("input-source-2"));
+       /* sourceStreams1.print(Printed.<String, Purchase>toSysOut().withLabel("input-source-1"));
+        sourceStreams2.print(Printed.<String, Purchase>toSysOut().withLabel("input-source-2"));*/
 
         PurchaseJoiner purchaseJoiner = new PurchaseJoiner();
 
-        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.outerJoin(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(1000)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
+        //Сообщения отправляются раз в несколько секунд по две штуки и между ними интервал 1 сек. Если JoinWindows.of() более > 1 сек, то join выдаст результат слияния в joined-data, если ниже, то не выдаст.
+        //Слияние происходит только у сообщений с одинаковым ключом и разницой во временных метках не менее 1 сек - Thread.sleep(1000); в методе toTopic()
+        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(10000)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
 
         joinedKStream.to("output-topic-join", Produced.with(Serdes.String(), correlatePurchaseSerde));
         joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
@@ -81,19 +85,20 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
     @Override
     public void toTopic() {
         Gson gson = new Gson();
+        String key = "FIXED"; // КЛЮЧ У СООБЩЕНИЙ ПОДЛЕЖЩИХ JOIN ДОЛЖЕН БЫТЬ ОДИНАКОВЫЙ
 
         try {
             String key1 = UUID.randomUUID().toString();
             Purchase purchase1 = Purchase.builder().id(key1).name("cola").price(Double.parseDouble(this.getRandomPrice(45, 200))).timestamp(new Date().getTime()).build();
             String value1 = gson.toJson(purchase1);
-            this.send(this.producer, INP_TOPIC_JOIN_1, key1, value1);
-            Thread.sleep(500);
+            this.send(this.producer, INP_TOPIC_JOIN_1, key, value1);
+            Thread.sleep(1000);
             String key2 = UUID.randomUUID().toString();
             Purchase purchase2 = Purchase.builder().id(key2).name("Smartphone").price(Double.parseDouble(this.getRandomPrice(8000, 200000))).timestamp(new Date().getTime()).build();
             String value2 = gson.toJson(purchase2);
-            this.send(this.producer, INP_TOPIC_JOIN_2, key2, value2);
+            this.send(this.producer, INP_TOPIC_JOIN_2, key, value2);
         } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
