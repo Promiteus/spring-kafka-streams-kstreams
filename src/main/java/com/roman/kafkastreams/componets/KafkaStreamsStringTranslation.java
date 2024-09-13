@@ -20,12 +20,9 @@ import java.util.UUID;
 @Component
 public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC = "string-topic";
-    private KafkaStreams kafkaStreams;
-    private final Properties kafkaStreamsProps;
     private final Producer<String, String> producer;
 
-    public KafkaStreamsStringTranslation(Properties kafkaStreamsProps, Producer<String, String> producer) {
-        this.kafkaStreamsProps = kafkaStreamsProps;
+    public KafkaStreamsStringTranslation(Producer<String, String> producer) {
         this.producer = producer;
     }
 
@@ -38,9 +35,6 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
 
         transformStream.to("output-topic", Produced.with(Serdes.String(), Serdes.String()));
         transformStream.print(Printed.<String, String>toSysOut().withLabel("output-data"));
-
-        this.kafkaStreams = new KafkaStreams(streamsBuilder.build(), this.kafkaStreamsProps);
-        this.kafkaStreams.start();
     }
 
     @Override
@@ -54,7 +48,6 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
 
     @PreDestroy
     public void destroy() {
-        this.kafkaStreams.close();
         this.producer.close();
     }
 }
