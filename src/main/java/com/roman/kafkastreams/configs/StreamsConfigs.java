@@ -1,4 +1,5 @@
 package com.roman.kafkastreams.configs;
+import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -10,6 +11,7 @@ import java.util.Properties;
 
 @Configuration
 public class StreamsConfigs {
+    private IKafkaStreamTopology kafkaStreamTopology;
 
     @Bean
     public Properties kafkaStreamsProps() {
@@ -39,5 +41,9 @@ public class StreamsConfigs {
         return new StreamsBuilder();
     }
 
-
+    @Bean
+    public KafkaStreams kafkaStreams(StreamsBuilder streamsBuilder, Properties kafkaStreamsProps) {
+        this.kafkaStreamTopology.process(streamsBuilder);
+        return new KafkaStreams(streamsBuilder.build(), kafkaStreamsProps);
+    }
 }

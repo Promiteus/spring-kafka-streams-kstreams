@@ -27,7 +27,6 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
     private final static String INP_TOPIC = "json-branch-topic";
     private final static int LESS50 = 0;
     private final static int ABOVE50 = 1;
-    private KafkaStreams kafkaStreams;
     private final Properties kafkaStreamsProps;
     private final Producer<String, String> producer;
 
@@ -54,7 +53,6 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
         JsonSerializer<Purchase> purchaseJsonSerializer = new JsonSerializer<>();
         Serde<Purchase> purchaseSerde = Serdes.serdeFrom(purchaseJsonSerializer, purchaseJsonDeserializer);
 
-        StreamsBuilder streamsBuilder = new StreamsBuilder();
         KStream<String, Purchase> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), purchaseSerde));
 
         Predicate<String, Purchase> isLess50 = (key, purchase) -> purchase.getPrice() < 50;
@@ -68,9 +66,6 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
 
         branchStream[ABOVE50].to("output-above-50-topic", Produced.with(Serdes.String(), purchaseSerde));
         branchStream[ABOVE50].print(Printed.<String, Purchase>toSysOut().withLabel("output-above-50-data"));
-
-        this.kafkaStreams = new KafkaStreams(streamsBuilder.build(), this.kafkaStreamsProps);
-        this.kafkaStreams.start();
     }
 
     @Override
@@ -81,11 +76,5 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
         String value = gson.toJson(purchase);
 
         this.send(this.producer, INP_TOPIC, key, value);
-    }
-
-    @PreDestroy
-    public void destroy() {
-        this.kafkaStreams.close();
-        this.producer.close();
     }
 }

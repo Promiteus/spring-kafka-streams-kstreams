@@ -30,8 +30,7 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
     }
 
     @Override
-    public void process() {
-        StreamsBuilder streamsBuilder = new StreamsBuilder();
+    public void process(StreamsBuilder streamsBuilder) {
         KStream<String, String> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
 
         sourceStream.print(Printed.<String, String>toSysOut().withLabel("input-data"));

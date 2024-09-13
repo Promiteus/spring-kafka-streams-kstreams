@@ -54,9 +54,6 @@ public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopo
 
         transformStream.to("output-topic", Produced.with(Serdes.String(), purchaseSerde));
         transformStream.print(Printed.<String, Purchase>toSysOut().withLabel("output-data-with-key"));
-
-        this.kafkaStreams = new KafkaStreams(streamsBuilder.build(), this.kafkaStreamsProps);
-        this.kafkaStreams.start();
     }
 
     @Override
