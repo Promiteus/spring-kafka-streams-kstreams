@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.*;
 import org.springframework.context.annotation.Profile;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 

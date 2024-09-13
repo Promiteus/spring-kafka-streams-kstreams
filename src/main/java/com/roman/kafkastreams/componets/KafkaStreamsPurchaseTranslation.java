@@ -10,7 +10,6 @@ import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 
@@ -29,12 +27,9 @@ import java.util.UUID;
 @Component
 public class KafkaStreamsPurchaseTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC = "json-topic";
-    private KafkaStreams kafkaStreams;
-    private final Properties kafkaStreamsProps;
     private final Producer<String, String> producer;
 
-    public KafkaStreamsPurchaseTranslation(Properties kafkaStreamsProps, Producer<String, String> producer) {
-        this.kafkaStreamsProps = kafkaStreamsProps;
+    public KafkaStreamsPurchaseTranslation(Producer<String, String> producer) {
         this.producer = producer;
     }
 
@@ -44,7 +39,6 @@ public class KafkaStreamsPurchaseTranslation implements IKafkaStreamTopology {
         JsonSerializer<Purchase> purchaseJsonSerializer = new JsonSerializer<>();
         Serde<Purchase> purchaseSerde = Serdes.serdeFrom(purchaseJsonSerializer, purchaseJsonDeserializer);
 
-        StreamsBuilder streamsBuilder = new StreamsBuilder();
         KStream<String, Purchase> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), purchaseSerde));
 
         sourceStream.print(Printed.<String, Purchase>toSysOut().withLabel("input-data"));
@@ -59,9 +53,6 @@ public class KafkaStreamsPurchaseTranslation implements IKafkaStreamTopology {
 
         transformStream.to("output-topic", Produced.with(Serdes.String(), purchaseSerde));
         transformStream.print(Printed.<String, Purchase>toSysOut().withLabel("output-data"));
-
-        this.kafkaStreams = new KafkaStreams(streamsBuilder.build(), this.kafkaStreamsProps);
-        this.kafkaStreams.start();
     }
 
     /**
@@ -88,7 +79,6 @@ public class KafkaStreamsPurchaseTranslation implements IKafkaStreamTopology {
 
     @PreDestroy
     public void destroy() {
-        this.kafkaStreams.close();
         this.producer.close();
     }
 }
