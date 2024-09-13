@@ -4,6 +4,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,6 +12,7 @@ import java.util.Properties;
 
 @Configuration
 public class StreamsConfigs {
+    @Autowired
     private IKafkaStreamTopology kafkaStreamTopology;
 
     @Bean
@@ -44,6 +46,6 @@ public class StreamsConfigs {
     @Bean
     public KafkaStreams kafkaStreams(StreamsBuilder streamsBuilder, Properties kafkaStreamsProps) {
         this.kafkaStreamTopology.process(streamsBuilder);
-        return new KafkaStreams(streamsBuilder.build(), kafkaStreamsProps());
+        return new KafkaStreams(streamsBuilder.build(), kafkaStreamsProps);
     }
 }
