@@ -1,7 +1,8 @@
 package com.roman.kafkastreams;
 
-import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,7 +16,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 @SpringBootApplication
 public class KafkaStreamsApplication {
     @Autowired
-    private IKafkaStreamsValueTranslation kafkaStreamsValueTranslation;
+    private IKafkaStreamTopology kafkaStreamsValueTranslation;
+    @Autowired
+    private StreamsBuilder streamsBuilder;
 
     public static void main(String[] args) {
         SpringApplication.run(KafkaStreamsApplication.class, args);
@@ -25,7 +28,7 @@ public class KafkaStreamsApplication {
     public CommandLineRunner runner() {
         return args -> {
             topicGenerator();
-            this.kafkaStreamsValueTranslation.exec();
+            this.kafkaStreamsValueTranslation.process(streamsBuilder);
         };
     }
 

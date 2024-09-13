@@ -1,5 +1,7 @@
 package com.roman.kafkastreams.configs;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,4 +33,11 @@ public class StreamsConfigs {
     public KafkaProducer<String,String> kvKafkaProducer(Properties kafkaProducerProps) {
         return new KafkaProducer<String, String>(kafkaProducerProps);
     }
+
+    @Bean
+    public StreamsBuilder streamsBuilder() {
+        return new StreamsBuilder();
+    }
+
+
 }

@@ -2,7 +2,7 @@ package com.roman.kafkastreams.componets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import com.roman.kafkastreams.models.JsonDeserializer;
 import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @Profile("json-branch-value")
 @Component
-public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamsValueTranslation {
+public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC = "json-branch-topic";
     private final static int LESS50 = 0;
     private final static int ABOVE50 = 1;
@@ -49,7 +49,7 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamsValue
     }
 
     @Override
-    public void exec() {
+    public void process(StreamsBuilder streamsBuilder) {
         JsonDeserializer<Purchase> purchaseJsonDeserializer = new JsonDeserializer<>(new ObjectMapper(), Purchase.class);
         JsonSerializer<Purchase> purchaseJsonSerializer = new JsonSerializer<>();
         Serde<Purchase> purchaseSerde = Serdes.serdeFrom(purchaseJsonSerializer, purchaseJsonDeserializer);

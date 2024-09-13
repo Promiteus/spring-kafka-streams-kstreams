@@ -2,7 +2,7 @@ package com.roman.kafkastreams.componets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import com.roman.kafkastreams.models.JsonDeserializer;
 import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
@@ -27,7 +27,7 @@ import java.util.UUID;
 
 @Profile("json-value")
 @Component
-public class KafkaStreamsPurchaseTranslation implements IKafkaStreamsValueTranslation {
+public class KafkaStreamsPurchaseTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC = "json-topic";
     private KafkaStreams kafkaStreams;
     private final Properties kafkaStreamsProps;
@@ -39,7 +39,7 @@ public class KafkaStreamsPurchaseTranslation implements IKafkaStreamsValueTransl
     }
 
     @Override
-    public void exec() {
+    public void process(StreamsBuilder streamsBuilder) {
         JsonDeserializer<Purchase> purchaseJsonDeserializer = new JsonDeserializer<>(new ObjectMapper(), Purchase.class);
         JsonSerializer<Purchase> purchaseJsonSerializer = new JsonSerializer<>();
         Serde<Purchase> purchaseSerde = Serdes.serdeFrom(purchaseJsonSerializer, purchaseJsonDeserializer);

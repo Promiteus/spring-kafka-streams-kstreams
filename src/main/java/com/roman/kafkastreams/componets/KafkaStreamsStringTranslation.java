@@ -1,11 +1,8 @@
 package com.roman.kafkastreams.componets;
 
-import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import jakarta.annotation.PreDestroy;
-import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -21,7 +18,7 @@ import java.util.UUID;
 
 @Profile(value = {"default", "string-value"})
 @Component
-public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslation {
+public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC = "string-topic";
     private KafkaStreams kafkaStreams;
     private final Properties kafkaStreamsProps;
@@ -33,7 +30,7 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamsValueTranslat
     }
 
     @Override
-    public void exec() {
+    public void process() {
         StreamsBuilder streamsBuilder = new StreamsBuilder();
         KStream<String, String> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
 

@@ -2,7 +2,7 @@ package com.roman.kafkastreams.componets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import com.roman.kafkastreams.models.JsonDeserializer;
 import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @Profile("json-select-key-value")
 @Component
-public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamsValueTranslation {
+public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC = "json-select-key-topic";
     private KafkaStreams kafkaStreams;
     private final Properties kafkaStreamsProps;
@@ -34,12 +34,11 @@ public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamsVal
     }
 
     @Override
-    public void exec() {
+    public void process(StreamsBuilder streamsBuilder) {
         JsonDeserializer<Purchase> purchaseJsonDeserializer = new JsonDeserializer<>(new ObjectMapper(), Purchase.class);
         JsonSerializer<Purchase> purchaseJsonSerializer = new JsonSerializer<>();
         Serde<Purchase> purchaseSerde = Serdes.serdeFrom(purchaseJsonSerializer, purchaseJsonDeserializer);
 
-        StreamsBuilder streamsBuilder = new StreamsBuilder();
         KStream<String, Purchase> sourceStream = streamsBuilder.stream(INP_TOPIC, Consumed.with(Serdes.String(), purchaseSerde));
 
         KeyValueMapper<String, Purchase, String> purchaseIdMapper = (k, v) -> v.getId();

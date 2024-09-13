@@ -2,7 +2,7 @@ package com.roman.kafkastreams.componets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamsValueTranslation;
+import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import com.roman.kafkastreams.mappers.PurchaseJoiner;
 import com.roman.kafkastreams.models.CorrelatePurchase;
 import com.roman.kafkastreams.models.JsonDeserializer;
@@ -28,7 +28,7 @@ import java.util.UUID;
 @Slf4j
 @Profile("json-join-values")
 @Component
-public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTranslation {
+public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
     private final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
     private KafkaStreams kafkaStreams;
@@ -41,7 +41,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamsValueTr
     }
 
     @Override
-    public void exec() {
+    public void process(StreamsBuilder streamsBuilder) {
         JsonDeserializer<Purchase> purchaseJsonDeserializer = new JsonDeserializer<>(new ObjectMapper(), Purchase.class);
         JsonSerializer<Purchase> purchaseJsonSerializer = new JsonSerializer<>();
         Serde<Purchase> purchaseSerde = Serdes.serdeFrom(purchaseJsonSerializer, purchaseJsonDeserializer);
