@@ -30,8 +30,6 @@ public class PurchaseJoiner implements ValueJoiner<Purchase, Purchase, Correlate
         correlatePurchase.totalPrice(totalPrice);
         correlatePurchase.purchases(purchaseList);
 
-        log.warn(">>>>> totalPrice: "+totalPrice);
-
         return correlatePurchase.build();
     }
 }
