@@ -31,12 +31,9 @@ import java.util.UUID;
 public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
     private final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
-    private KafkaStreams kafkaStreams;
-    private final Properties kafkaStreamsProps;
     private final Producer<String, String> producer;
 
-    public KafkaStreamsPurchaseJoinTranslation(Properties kafkaStreamsProps, Producer<String, String> producer) {
-        this.kafkaStreamsProps = kafkaStreamsProps;
+    public KafkaStreamsPurchaseJoinTranslation(Producer<String, String> producer) {
         this.producer = producer;
     }
 
@@ -50,7 +47,6 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology
         JsonSerializer<CorrelatePurchase> correlatePurchaseJsonSerializer = new JsonSerializer<>();
         Serde<CorrelatePurchase> correlatePurchaseSerde = Serdes.serdeFrom(correlatePurchaseJsonSerializer, correlatePurchaseJsonDeserializer);
 
-        StreamsBuilder streamsBuilder = new StreamsBuilder();
         KStream<String, Purchase> sourceStreams1 = streamsBuilder.stream(INP_TOPIC_JOIN_1, Consumed.with(Serdes.String(), purchaseSerde));
         KStream<String, Purchase> sourceStreams2 = streamsBuilder.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
 
@@ -66,9 +62,6 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology
 
         joinedKStream.to("output-topic-join", Produced.with(Serdes.String(), correlatePurchaseSerde));
         joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
-
-        this.kafkaStreams = new KafkaStreams(streamsBuilder.build(), this.kafkaStreamsProps);
-        this.kafkaStreams.start();
     }
 
     /**
@@ -105,7 +98,6 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology
 
     @PreDestroy
     public void destroy() {
-        this.kafkaStreams.close();
         this.producer.close();
     }
 }

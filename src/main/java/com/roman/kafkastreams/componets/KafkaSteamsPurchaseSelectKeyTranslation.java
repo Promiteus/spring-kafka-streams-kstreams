@@ -24,7 +24,6 @@ import java.util.UUID;
 @Component
 public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC = "json-select-key-topic";
-    private KafkaStreams kafkaStreams;
     private final Producer<String, String> producer;
 
     public KafkaSteamsPurchaseSelectKeyTranslation(Producer<String, String> producer) {
@@ -66,7 +65,7 @@ public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopo
 
     @PreDestroy
     public void destroy() {
-        this.kafkaStreams.close();
         this.producer.close();
     }
+
 }

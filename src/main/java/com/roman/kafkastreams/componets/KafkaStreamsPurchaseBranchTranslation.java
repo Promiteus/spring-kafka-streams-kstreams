@@ -75,4 +75,9 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
 
         this.send(this.producer, INP_TOPIC, key, value);
     }
+
+    @PreDestroy
+    public void destroy() {
+        this.producer.close();
+    }
 }
