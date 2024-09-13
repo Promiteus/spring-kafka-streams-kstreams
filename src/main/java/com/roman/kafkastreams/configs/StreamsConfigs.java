@@ -44,6 +44,6 @@ public class StreamsConfigs {
     @Bean
     public KafkaStreams kafkaStreams(StreamsBuilder streamsBuilder, Properties kafkaStreamsProps) {
         this.kafkaStreamTopology.process(streamsBuilder);
-        return new KafkaStreams(streamsBuilder.build(), kafkaStreamsProps);
+        return new KafkaStreams(streamsBuilder.build(), kafkaStreamsProps());
     }
 }

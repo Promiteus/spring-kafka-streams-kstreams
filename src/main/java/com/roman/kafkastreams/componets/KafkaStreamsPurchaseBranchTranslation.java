@@ -27,11 +27,9 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
     private final static String INP_TOPIC = "json-branch-topic";
     private final static int LESS50 = 0;
     private final static int ABOVE50 = 1;
-    private final Properties kafkaStreamsProps;
     private final Producer<String, String> producer;
 
-    public KafkaStreamsPurchaseBranchTranslation(Properties kafkaStreamsProps, Producer<String, String> producer) {
-        this.kafkaStreamsProps = kafkaStreamsProps;
+    public KafkaStreamsPurchaseBranchTranslation(Producer<String, String> producer) {
         this.producer = producer;
     }
 
