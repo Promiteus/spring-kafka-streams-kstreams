@@ -14,13 +14,8 @@ import org.springframework.stereotype.Component;
 
 @Profile(value = {"default", "string-value"})
 @Component
-public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
-    private final static String INP_TOPIC = "string-topic";
-    private final Producer<String, String> producer;
-
-    public KafkaStreamsStringTranslation(Producer<String, String> producer) {
-        this.producer = producer;
-    }
+public class KafkaStreamsStringTransformTranslation implements IKafkaStreamTopology {
+    public final static String INP_TOPIC = "string-topic";
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
@@ -33,17 +28,4 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
         transformStream.print(Printed.<String, String>toSysOut().withLabel("output-data"));
     }
 
-  /*  @Override
-    public void toTopic() {
-        String key = UUID.randomUUID().toString();
-        String value = "Hello, Kafka! important";
-
-        this.send(this.producer, INP_TOPIC, key, value);
-    }
-
-
-    @PreDestroy
-    public void destroy() {
-        this.producer.close();
-    }*/
 }
