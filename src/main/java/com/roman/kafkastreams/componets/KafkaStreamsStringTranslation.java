@@ -1,10 +1,8 @@
 package com.roman.kafkastreams.componets;
 
 import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
-import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
@@ -13,8 +11,6 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.Properties;
-import java.util.UUID;
 
 @Profile(value = {"default", "string-value"})
 @Component
@@ -37,7 +33,7 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
         transformStream.print(Printed.<String, String>toSysOut().withLabel("output-data"));
     }
 
-    @Override
+  /*  @Override
     public void toTopic() {
         String key = UUID.randomUUID().toString();
         String value = "Hello, Kafka! important";
@@ -49,5 +45,5 @@ public class KafkaStreamsStringTranslation implements IKafkaStreamTopology {
     @PreDestroy
     public void destroy() {
         this.producer.close();
-    }
+    }*/
 }

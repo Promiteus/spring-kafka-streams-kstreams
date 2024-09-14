@@ -1,16 +1,13 @@
 package com.roman.kafkastreams.componets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import com.roman.kafkastreams.mappers.PurchaseJoiner;
 import com.roman.kafkastreams.models.CorrelatePurchase;
 import com.roman.kafkastreams.models.JsonDeserializer;
 import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -19,9 +16,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
+
 
 @Slf4j
 @Profile("json-join-values")
@@ -29,11 +24,6 @@ import java.util.UUID;
 public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
     private final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
-    private final Producer<String, String> producer;
-
-    public KafkaStreamsPurchaseJoinTranslation(Producer<String, String> producer) {
-        this.producer = producer;
-    }
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
@@ -68,7 +58,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology
      * @param max double
      * @return String
      */
-    private String getRandomPrice(double min, double max) {
+    /*private String getRandomPrice(double min, double max) {
         double random = new Random().nextDouble();
         double val = min + (random * (max - min));
         return String.valueOf(val);
@@ -97,5 +87,5 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology
     @PreDestroy
     public void destroy() {
         this.producer.close();
-    }
+    }*/
 }

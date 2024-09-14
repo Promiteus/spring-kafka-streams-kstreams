@@ -1,13 +1,11 @@
 package com.roman.kafkastreams.componets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.roman.kafkastreams.componets.intrfaces.IKafkaStreamTopology;
 import com.roman.kafkastreams.models.JsonDeserializer;
 import com.roman.kafkastreams.models.JsonSerializer;
 import com.roman.kafkastreams.models.Purchase;
-import jakarta.annotation.PreDestroy;
-import org.apache.kafka.clients.producer.Producer;
+
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -15,9 +13,6 @@ import org.apache.kafka.streams.kstream.*;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
 
 @Profile("json-branch-value")
 @Component
@@ -25,11 +20,6 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
     private final static String INP_TOPIC = "json-branch-topic";
     private final static int LESS50 = 0;
     private final static int ABOVE50 = 1;
-    private final Producer<String, String> producer;
-
-    public KafkaStreamsPurchaseBranchTranslation(Producer<String, String> producer) {
-        this.producer = producer;
-    }
 
     /**
      * Случайна цена из диапазона
@@ -37,11 +27,11 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
      * @param max double
      * @return String
      */
-    private String getRandomPrice(double min, double max) {
+   /* private String getRandomPrice(double min, double max) {
         double random = new Random().nextDouble();
         double val = min + (random * (max - min));
         return String.valueOf(val);
-    }
+    }*/
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
@@ -64,7 +54,7 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
         branchStream[ABOVE50].print(Printed.<String, Purchase>toSysOut().withLabel("output-above-50-data"));
     }
 
-    @Override
+  /*  @Override
     public void toTopic() {
         String key = null;
         Purchase purchase = Purchase.builder().id(UUID.randomUUID().toString()).name("cola").price(Double.parseDouble(this.getRandomPrice(35, 180))).timestamp(new Date().getTime()).build();
@@ -77,5 +67,5 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
     @PreDestroy
     public void destroy() {
         this.producer.close();
-    }
+    }*/
 }
