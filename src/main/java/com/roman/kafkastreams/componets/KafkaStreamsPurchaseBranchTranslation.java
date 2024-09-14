@@ -17,21 +17,10 @@ import org.springframework.stereotype.Component;
 @Profile("json-branch-value")
 @Component
 public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopology {
-    private final static String INP_TOPIC = "json-branch-topic";
-    private final static int LESS50 = 0;
-    private final static int ABOVE50 = 1;
+    public final static String INP_TOPIC = "json-branch-topic";
+    public final static int LESS50 = 0;
+    public final static int ABOVE50 = 1;
 
-    /**
-     * Случайна цена из диапазона
-     * @param min double
-     * @param max double
-     * @return String
-     */
-   /* private String getRandomPrice(double min, double max) {
-        double random = new Random().nextDouble();
-        double val = min + (random * (max - min));
-        return String.valueOf(val);
-    }*/
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
@@ -54,18 +43,4 @@ public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopolo
         branchStream[ABOVE50].print(Printed.<String, Purchase>toSysOut().withLabel("output-above-50-data"));
     }
 
-  /*  @Override
-    public void toTopic() {
-        String key = null;
-        Purchase purchase = Purchase.builder().id(UUID.randomUUID().toString()).name("cola").price(Double.parseDouble(this.getRandomPrice(35, 180))).timestamp(new Date().getTime()).build();
-        Gson gson = new Gson();
-        String value = gson.toJson(purchase);
-
-        this.send(this.producer, INP_TOPIC, key, value);
-    }
-
-    @PreDestroy
-    public void destroy() {
-        this.producer.close();
-    }*/
 }

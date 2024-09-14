@@ -1,6 +1,7 @@
 package com.roman.kafkastreams.componets.producers;
 
 import com.google.gson.Gson;
+import com.roman.kafkastreams.componets.KafkaSteamsPurchaseSelectKeyTranslation;
 import com.roman.kafkastreams.componets.intrfaces.IPermProducer;
 import com.roman.kafkastreams.models.Purchase;
 import org.apache.kafka.clients.producer.Producer;
@@ -28,7 +29,7 @@ public class KafkaProducerPurchaseSelectKey implements IPermProducer {
         Gson gson = new Gson();
         String value = gson.toJson(purchase);
 
-        this.send(this.producer, INP_TOPIC, key, value);
+        this.send(this.producer, KafkaSteamsPurchaseSelectKeyTranslation.INP_TOPIC, key, value);
     }
 
     public void destroy() {
