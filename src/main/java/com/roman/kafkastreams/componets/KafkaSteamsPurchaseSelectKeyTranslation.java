@@ -22,11 +22,11 @@ import java.util.UUID;
 @Component
 public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopology {
     private final static String INP_TOPIC = "json-select-key-topic";
-    private final Producer<String, String> producer;
+  //  private final Producer<String, String> producer;
 
-    public KafkaSteamsPurchaseSelectKeyTranslation(Producer<String, String> producer) {
+   /* public KafkaSteamsPurchaseSelectKeyTranslation(Producer<String, String> producer) {
         this.producer = producer;
-    }
+    }*/
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
@@ -53,17 +53,17 @@ public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopo
 
     @Override
     public void toTopic() {
-        String key = null;
+       /* String key = null;
         Purchase purchase = Purchase.builder().id(UUID.randomUUID().toString()).name("cola").price(100).timestamp(new Date().getTime()).build();
         Gson gson = new Gson();
         String value = gson.toJson(purchase);
 
-        this.send(this.producer, INP_TOPIC, key, value);
+        this.send(this.producer, INP_TOPIC, key, value);*/
     }
 
-    @PreDestroy
+   /* @PreDestroy
     public void destroy() {
         this.producer.close();
-    }
+    }*/
 
 }
