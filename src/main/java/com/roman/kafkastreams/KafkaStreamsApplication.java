@@ -1,5 +1,6 @@
 package com.roman.kafkastreams;
 
+import com.roman.kafkastreams.componets.intrfaces.IPermProducer;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.KafkaStreams;
@@ -19,8 +20,8 @@ import java.util.concurrent.Executors;
 @EnableScheduling
 @SpringBootApplication
 public class KafkaStreamsApplication {
-   // @Autowired
-   // private IKafkaStreamTopology kafkaStreamsValueTranslation;
+    @Autowired
+    private IPermProducer permProducer;
     @Autowired
     private KafkaStreams kafkaStreams;
     private ExecutorService executorService;
@@ -40,17 +41,17 @@ public class KafkaStreamsApplication {
     @Bean
     public CommandLineRunner runner() {
         return args -> {
-           // topicGenerator();
+            topicGenerator();
             log.warn("Starting service single pool...");
             this.executorService = Executors.newSingleThreadExecutor();
             this.executorService.submit(this.startStream());
         };
     }
 
-   // @Scheduled(fixedDelay = 2000, initialDelay = 5000)
-    /*public void topicGenerator() {
-        this.kafkaStreamsValueTranslation.toTopic();
-    }*/
+    @Scheduled(fixedDelay = 2000, initialDelay = 5000)
+    public void topicGenerator() {
+        this.permProducer.toTopic();
+    }
 
     @PreDestroy
     public void destroy() {

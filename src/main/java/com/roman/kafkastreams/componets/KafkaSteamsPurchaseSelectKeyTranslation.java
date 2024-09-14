@@ -15,12 +15,7 @@ import org.springframework.stereotype.Component;
 @Profile("json-select-key-value")
 @Component
 public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopology {
-    private final static String INP_TOPIC = "json-select-key-topic";
-  //  private final Producer<String, String> producer;
-
-   /* public KafkaSteamsPurchaseSelectKeyTranslation(Producer<String, String> producer) {
-        this.producer = producer;
-    }*/
+    public final static String INP_TOPIC = "json-select-key-topic";
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
@@ -44,20 +39,4 @@ public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopo
         transformStream.to("output-topic", Produced.with(Serdes.String(), purchaseSerde));
         transformStream.print(Printed.<String, Purchase>toSysOut().withLabel("output-data-with-key"));
     }
-
-   // @Override
-   // public void toTopic() {
-       /* String key = null;
-        Purchase purchase = Purchase.builder().id(UUID.randomUUID().toString()).name("cola").price(100).timestamp(new Date().getTime()).build();
-        Gson gson = new Gson();
-        String value = gson.toJson(purchase);
-
-        this.send(this.producer, INP_TOPIC, key, value);*/
-  //  }
-
-   /* @PreDestroy
-    public void destroy() {
-        this.producer.close();
-    }*/
-
 }
