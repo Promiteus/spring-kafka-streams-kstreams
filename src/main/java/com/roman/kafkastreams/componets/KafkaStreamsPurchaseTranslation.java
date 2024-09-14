@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Profile("json-value")
 @Component
 public class KafkaStreamsPurchaseTranslation implements IKafkaStreamTopology {
-    private final static String INP_TOPIC = "json-topic";
+    public final static String INP_TOPIC = "json-topic";
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
@@ -44,30 +44,4 @@ public class KafkaStreamsPurchaseTranslation implements IKafkaStreamTopology {
         transformStream.print(Printed.<String, Purchase>toSysOut().withLabel("output-data"));
     }
 
-    /**
-     * Случайна цена из диапазона
-     * @param min double
-     * @param max double
-     * @return String
-     */
-  /*  private String getRandomPrice(double min, double max) {
-        double random = new Random().nextDouble();
-        double val = min + (random * (max - min));
-        return new DecimalFormat("#,##").format(val);
-    }
-
-    @Override
-    public void toTopic() {
-        String key = null;
-        Purchase purchase = Purchase.builder().id(UUID.randomUUID().toString()).name("pencil").price(Double.parseDouble(this.getRandomPrice(10, 100))).timestamp(new Date().getTime()).build();
-        Gson gson = new Gson();
-        String value = gson.toJson(purchase);
-
-        this.send(this.producer, INP_TOPIC, key, value);
-    }
-
-    @PreDestroy
-    public void destroy() {
-        this.producer.close();
-    }*/
 }
