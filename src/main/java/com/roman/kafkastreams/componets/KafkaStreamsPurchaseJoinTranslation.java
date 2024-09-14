@@ -38,8 +38,6 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology
         KStream<String, Purchase> sourceStreams1 = streamsBuilder.stream(INP_TOPIC_JOIN_1, Consumed.with(Serdes.String(), purchaseSerde));
         KStream<String, Purchase> sourceStreams2 = streamsBuilder.stream(INP_TOPIC_JOIN_2, Consumed.with(Serdes.String(), purchaseSerde));
 
-       /* sourceStreams1.print(Printed.<String, Purchase>toSysOut().withLabel("input-source-1"));
-        sourceStreams2.print(Printed.<String, Purchase>toSysOut().withLabel("input-source-2"));*/
 
         PurchaseJoiner purchaseJoiner = new PurchaseJoiner();
 
