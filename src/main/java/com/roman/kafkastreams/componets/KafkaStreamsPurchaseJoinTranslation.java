@@ -22,8 +22,8 @@ import java.time.Duration;
 @Profile("json-join-values")
 @Component
 public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology {
-    private final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
-    private final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
+    public final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
+    public final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
 
     @Override
     public void process(StreamsBuilder streamsBuilder) {
@@ -52,40 +52,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology
         joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
     }
 
-    /**
-     * Случайна цена из диапазона
-     * @param min double
-     * @param max double
-     * @return String
-     */
-    /*private String getRandomPrice(double min, double max) {
-        double random = new Random().nextDouble();
-        double val = min + (random * (max - min));
-        return String.valueOf(val);
-    }
 
-    @Override
-    public void toTopic() {
-        Gson gson = new Gson();
-        String key = "purchase"; // КЛЮЧ У СООБЩЕНИЙ ПОДЛЕЖЩИХ JOIN ДОЛЖЕН БЫТЬ ОДИНАКОВЫЙ
 
-        try {
-            String key1 = UUID.randomUUID().toString();
-            Purchase purchase1 = Purchase.builder().id(key1).name("cola").price(Double.parseDouble(this.getRandomPrice(45, 200))).timestamp(new Date().getTime()).build();
-            String value1 = gson.toJson(purchase1);
-            this.send(this.producer, INP_TOPIC_JOIN_1, key, value1);
-            Thread.sleep(1000);
-            String key2 = UUID.randomUUID().toString();
-            Purchase purchase2 = Purchase.builder().id(key2).name("Smartphone").price(Double.parseDouble(this.getRandomPrice(8000, 200000))).timestamp(new Date().getTime()).build();
-            String value2 = gson.toJson(purchase2);
-            this.send(this.producer, INP_TOPIC_JOIN_2, key, value2);
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-        }
-    }
 
-    @PreDestroy
-    public void destroy() {
-        this.producer.close();
-    }*/
 }
