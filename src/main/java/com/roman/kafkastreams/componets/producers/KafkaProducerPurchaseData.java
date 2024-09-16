@@ -1,7 +1,7 @@
 package com.roman.kafkastreams.componets.producers;
 
 import com.google.gson.Gson;
-import com.roman.kafkastreams.componets.KafkaStreamsPurchaseTranslation;
+import com.roman.kafkastreams.componets.KafkaStreamsPurchaseTopology;
 import com.roman.kafkastreams.componets.intrfaces.IPermProducer;
 import com.roman.kafkastreams.models.Purchase;
 import jakarta.annotation.PreDestroy;
@@ -47,7 +47,7 @@ public class KafkaProducerPurchaseData implements IPermProducer {
         Gson gson = new Gson();
         String value = gson.toJson(purchase);
 
-        this.send(this.producer, KafkaStreamsPurchaseTranslation.INP_TOPIC, key, value);
+        this.send(this.producer, KafkaStreamsPurchaseTopology.INP_TOPIC, key, value);
     }
 
     @PreDestroy

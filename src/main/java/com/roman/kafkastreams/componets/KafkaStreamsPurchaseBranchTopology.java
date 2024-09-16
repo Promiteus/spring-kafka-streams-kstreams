@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Profile("json-branch-value")
 @Component
-public class KafkaStreamsPurchaseBranchTranslation implements IKafkaStreamTopology {
+public class KafkaStreamsPurchaseBranchTopology implements IKafkaStreamTopology {
     public final static String INP_TOPIC = "json-branch-topic";
     public final static int LESS50 = 0;
     public final static int ABOVE50 = 1;

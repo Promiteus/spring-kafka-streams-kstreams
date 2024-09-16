@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Profile("json-select-key-value")
 @Component
-public class KafkaSteamsPurchaseSelectKeyTranslation implements IKafkaStreamTopology {
+public class KafkaSteamsPurchaseSelectKeyTopology implements IKafkaStreamTopology {
     public final static String INP_TOPIC = "json-select-key-topic";
 
     @Override

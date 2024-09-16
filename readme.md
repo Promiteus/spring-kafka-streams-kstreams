@@ -34,7 +34,7 @@ mvn spring-boot:run
 ### Преобразование строки с меткой "important" в верхний регистр. Пример работы функций filter() и mapValues().  
 * Топики "input-data" (входящие данные), "output-data" (данные после преобразования)
 * В файле application.yml выставить профиль spring.profile.active=string-value  
-* Класс топологии: ***KafkaStreamsStringTransformTranslation.java***    
+* Класс топологии: ***KafkaStreamsStringTransformTopology.java***    
 * Запустить проект:  
 ```
 mvn spring-boot:run
@@ -55,7 +55,7 @@ Message sent successfully. Offset: 3
 ### Добавление ключа в сообщения потока. Пример работы функции selectKey().
 * Топики "input-data" (входящие данные), "output-data-with-key" (данные после преобразования)
 * В файле application.yml выставить профиль spring.profile.active=json-select-key-value
-* Класс топологии: ***KafkaSteamsPurchaseSelectKeyTranslation.java***
+* Класс топологии: ***KafkaSteamsPurchaseSelectKeyTopology.java***
 * Запустить проект:
 ```
 mvn spring-boot:run
@@ -77,7 +77,7 @@ Message sent successfully. Offset: 31
 ### Разветвление потоков. Пример работы функции branch(), разделение потоков по цене.
 * Топики "input-data" (входящие данные), "output-above-50-data" (данные после преобразования - цена больше 50), "output-less-50-data" (данные после преобразования - цена меньше 50)
 * В файле application.yml выставить профиль spring.profile.active=json-branch-value
-* Класс топологии: ***KafkaStreamsPurchaseBranchTranslation.java***
+* Класс топологии: ***KafkaStreamsPurchaseBranchTopology.java***
 * Запустить проект:
 ```
 mvn spring-boot:run
@@ -99,7 +99,7 @@ Message sent successfully. Offset: 26
 * В топики input-topic-join-1 и input-topic-join-2 с интервалом в 1 сек. (можете поэкспериментировать) подаются тестовые сообщения с ***одинаковыми ключами***. Эти сообщения должны обединиться в третий выходной поток "joined-data" только если временной интервал между сообщениями не больше интервала окна в функции ***JoinWindows.of(Duration.ofMillis(1500)***. В просессе экспериметов можно менять цифры в toTopic() и функции JoinWindows.of(Duration.ofMillis(1500)) топологии KafkaStreamsPurchaseJoinTranslation.java. 
   По поточно Purchase 1 и Purchase 2 объединяются в CorrelatePurchase.
 * В файле application.yml выставить профиль spring.profile.active=json-join-values
-* Класс топологии: ***KafkaStreamsPurchaseJoinTranslation.java***
+* Класс топологии: ***KafkaStreamsPurchaseJoinTopology.java***
 * Запустить проект:
 ```
 mvn spring-boot:run
