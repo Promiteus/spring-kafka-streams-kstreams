@@ -47,7 +47,8 @@ public class KafkaStreamsApplication {
         };
     }
 
-    @Scheduled(fixedDelay = 2000, initialDelay = 5000)
+    //Генерирует тестовый поток сообщений в зависимости от типа профиля приложения
+    @Scheduled(fixedDelay = 1000, initialDelay = 1000)
     public void topicGenerator() {
         this.permProducer.toTopic();
     }

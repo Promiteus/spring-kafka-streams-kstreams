@@ -44,7 +44,7 @@ public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology
         //JoinWindows.of() задет предельное врменное окно между сообщениями.
         //Сообщения отправляются раз в несколько секунд по две штуки и между ними интервал 1 сек. Если JoinWindows.of() более > 1 сек, то join выдаст результат слияния в joined-data, если ниже, то не выдаст.
         //Слияние происходит только у сообщений с одинаковым ключом и разницой во временных метках не менее 1 сек - Thread.sleep(1000); в методе toTopic()
-        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(100)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
+        KStream<String, CorrelatePurchase> joinedKStream = sourceStreams1.join(sourceStreams2, purchaseJoiner, JoinWindows.of(Duration.ofMillis(1500)), StreamJoined.with(Serdes.String(), purchaseSerde, purchaseSerde));
 
         joinedKStream.to("output-topic-join", Produced.with(Serdes.String(), correlatePurchaseSerde));
         joinedKStream.print(Printed.<String, CorrelatePurchase>toSysOut().withLabel("joined-data"));
