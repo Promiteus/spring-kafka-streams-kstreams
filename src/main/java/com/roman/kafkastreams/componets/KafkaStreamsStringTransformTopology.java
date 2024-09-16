@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Profile(value = {"default", "string-value"})
 @Component
-public class KafkaStreamsStringTransformTranslation implements IKafkaStreamTopology {
+public class KafkaStreamsStringTransformTopology implements IKafkaStreamTopology {
     public final static String INP_TOPIC = "string-topic";
 
     @Override

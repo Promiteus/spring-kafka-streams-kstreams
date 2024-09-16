@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 @Profile("json-value")
 @Component
-public class KafkaStreamsPurchaseTranslation implements IKafkaStreamTopology {
+public class KafkaStreamsPurchaseTopology implements IKafkaStreamTopology {
     public final static String INP_TOPIC = "json-topic";
 
     @Override

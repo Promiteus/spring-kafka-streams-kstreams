@@ -21,7 +21,7 @@ import java.time.Duration;
 @Slf4j
 @Profile("json-join-values")
 @Component
-public class KafkaStreamsPurchaseJoinTranslation implements IKafkaStreamTopology {
+public class KafkaStreamsPurchaseJoinTopology implements IKafkaStreamTopology {
     public final static String INP_TOPIC_JOIN_1 = "input-topic-join-1";
     public final static String INP_TOPIC_JOIN_2 = "input-topic-join-2";
 

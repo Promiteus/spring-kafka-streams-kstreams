@@ -1,7 +1,7 @@
 package com.roman.kafkastreams.componets.producers;
 
 import com.google.gson.Gson;
-import com.roman.kafkastreams.componets.KafkaStreamsPurchaseJoinTranslation;
+import com.roman.kafkastreams.componets.KafkaStreamsPurchaseJoinTopology;
 import com.roman.kafkastreams.componets.intrfaces.IPermProducer;
 import com.roman.kafkastreams.models.Purchase;
 import jakarta.annotation.PreDestroy;
@@ -45,12 +45,12 @@ public class KafkaProducerPurchaseJoin implements IPermProducer {
             String key1 = UUID.randomUUID().toString();
             Purchase purchase1 = Purchase.builder().id(key1).name("cola").price(Double.parseDouble(this.getRandomPrice(45, 200))).timestamp(new Date().getTime()).build();
             String value1 = gson.toJson(purchase1);
-            this.send(this.producer, KafkaStreamsPurchaseJoinTranslation.INP_TOPIC_JOIN_1, key, value1);
+            this.send(this.producer, KafkaStreamsPurchaseJoinTopology.INP_TOPIC_JOIN_1, key, value1);
             Thread.sleep(1000);
             String key2 = UUID.randomUUID().toString();
             Purchase purchase2 = Purchase.builder().id(key2).name("Smartphone").price(Double.parseDouble(this.getRandomPrice(8000, 200000))).timestamp(new Date().getTime()).build();
             String value2 = gson.toJson(purchase2);
-            this.send(this.producer, KafkaStreamsPurchaseJoinTranslation.INP_TOPIC_JOIN_2, key, value2);
+            this.send(this.producer, KafkaStreamsPurchaseJoinTopology.INP_TOPIC_JOIN_2, key, value2);
         } catch (InterruptedException e) {
             log.error(e.getMessage());
         }

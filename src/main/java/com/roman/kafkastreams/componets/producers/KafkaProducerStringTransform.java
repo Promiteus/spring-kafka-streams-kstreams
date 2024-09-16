@@ -1,6 +1,6 @@
 package com.roman.kafkastreams.componets.producers;
 
-import com.roman.kafkastreams.componets.KafkaStreamsStringTransformTranslation;
+import com.roman.kafkastreams.componets.KafkaStreamsStringTransformTopology;
 import com.roman.kafkastreams.componets.intrfaces.IPermProducer;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.clients.producer.Producer;
@@ -23,7 +23,7 @@ public class KafkaProducerStringTransform implements IPermProducer {
         String key = UUID.randomUUID().toString();
         String value = "Hello, Kafka! important";
 
-        this.send(this.producer, KafkaStreamsStringTransformTranslation.INP_TOPIC, key, value);
+        this.send(this.producer, KafkaStreamsStringTransformTopology.INP_TOPIC, key, value);
     }
 
     @PreDestroy
