@@ -2,7 +2,7 @@ spring:
   application:
     name: kafka-streams-1
   profiles:
-    active: string-value
+    active: json-select-key-value
   kafka:
     streams:
       bootstrap-servers: localhost:9092
