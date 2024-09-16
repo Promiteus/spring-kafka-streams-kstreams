@@ -5,8 +5,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-public interface IKafkaStreamsValueTranslation {
-    void exec();
+public interface IPermProducer {
     void toTopic();
 
     default void send(Producer<String, String> producer, String topic, String key, String value) {
